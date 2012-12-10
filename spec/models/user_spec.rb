@@ -141,4 +141,12 @@ describe User do
     end
     it { should be_admin }
   end
+
+  describe "with admin attribute" do
+    it "should not allow admin attribute mass assignment" do
+      expect do
+        @user.update_attributes(admin: true)
+      end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
+  end
 end

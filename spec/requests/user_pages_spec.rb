@@ -41,7 +41,7 @@ describe "User Pages" do
     	  fill_in "Name", with: "Example User"
     	  fill_in "Email", with: "user@example.com"
     	  fill_in "Password", with: "foobar"
-    	  fill_in "Confirmation", with: "foobar"
+    	  fill_in "Confirm Password", with: "foobar"
     	end
 
       it "should create a user" do
@@ -55,6 +55,21 @@ describe "User Pages" do
       	it { should have_selector('title', text: user.name) }
       	it { should have_selector('div.alert.alert-success', text: 'Welcome') }
         it { should have_link("Sign out") }
+      end
+    end
+
+    describe "with signed in user" do
+      let(:user) { FactoryGirl.create(:user) }
+      before { sign_in user }
+
+      describe "with accessing signup page" do
+        before { get signup_path }
+        specify { response.should redirect_to(root_path) }
+      end
+
+      describe "with attempt to create a new user" do
+        before { post users_path }
+        specify { response.should redirect_to(root_path) }
       end
     end
   end
@@ -137,6 +152,18 @@ describe "User Pages" do
         end
         it { should_not have_link('delete', href: user_path(admin)) }
       end
+    end
+  end
+
+  describe "destroy" do
+    let(:admin) { FactoryGirl.create(:admin) }
+    before do
+      admin.save
+      sign_in admin
+    end
+
+    it "should not delete the admin user" do
+      expect { delete user_path(admin) }.not_to change(User, :count)
     end
   end
 end
