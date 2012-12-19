@@ -39,4 +39,14 @@ describe "Micropost pages" do
       end
     end
   end
+
+  describe "with other user's microposts" do
+    let(:new_user) { FactoryGirl.create(:user) }
+    let!(:user_micropost) { user.microposts.create(content: 'Lorem ipsum') }
+    let!(:new_user_micropost) { new_user.microposts.create(content: 'Lorem ipsum') }
+    before { visit root_path } 
+
+    it { should have_link('delete', href: micropost_path(user_micropost)) }
+    it { should_not have_link('delete', href: micropost_path(new_user_micropost)) }
+  end
 end

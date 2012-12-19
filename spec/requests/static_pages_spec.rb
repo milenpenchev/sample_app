@@ -1,4 +1,5 @@
 require 'spec_helper'
+include RSpec::Core::Formatters::Helpers
 
 describe "Static pages" do
 
@@ -30,6 +31,10 @@ describe "Static pages" do
         user.feed.each do |item|
           page.should have_selector("li##{item.id}", text: item.content)
         end
+      end
+
+      it "should see proper microposts count" do
+        page.should have_selector('span', text: pluralize(user.microposts.count, 'micropost'))
       end
     end
  	end
